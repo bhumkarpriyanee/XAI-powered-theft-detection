@@ -3,8 +3,7 @@
 ## How to run it locally
 
 ### Run the backend server
-- cd backend
-- uvicorn mainp:app --reload
+- uvicorn backend.main:app --reload
 
 ### Run the frontend
 - cd dashboard
