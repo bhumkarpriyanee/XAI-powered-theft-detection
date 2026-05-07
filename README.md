@@ -6,7 +6,7 @@
 - cd backend
 - uvicorn mainp:app --reload
 
-### Run the frontend server
+### Run the frontend
 - cd dashboard
 - npm run dev
 
