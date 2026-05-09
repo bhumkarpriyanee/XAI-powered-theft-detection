@@ -35,6 +35,11 @@ def get_db():
 from backend.ml.predict import run_predictions
 from backend.ml.explain import explain_customer
 
+# Global settings (in-memory for demo)
+SYSTEM_SETTINGS = {
+    "detection_threshold": 0.5
+}
+
 @app.post("/api/data")
 def receive_meter_data(
     data: dict,
@@ -56,7 +61,45 @@ def receive_meter_data(
 @app.get("/api/customers")
 def get_customers():
     df = run_predictions()
+    if not df.empty:
+        # Assign mock zones based on customer_id
+        df['zone'] = [f"Zone {(cid % 4) + 1}" for cid in df.index]
+        # Re-apply threshold from settings
+        df['is_theft'] = (df['probability'] >= SYSTEM_SETTINGS["detection_threshold"]).astype(int)
     return JSONResponse(df.reset_index().to_dict(orient="records"))
+
+@app.get("/api/settings")
+def get_settings():
+    return SYSTEM_SETTINGS
+
+@app.post("/api/settings")
+def update_settings(settings: dict):
+    if "detection_threshold" in settings:
+        SYSTEM_SETTINGS["detection_threshold"] = float(settings["detection_threshold"])
+    return {"status": "updated", "settings": SYSTEM_SETTINGS}
+
+@app.get("/api/stats")
+def get_stats():
+    df = run_predictions()
+    if df.empty:
+        return {
+            "total_customers": 0,
+            "flagged_today": 0,
+            "resolved_cases": 0,
+            "average_risk": 0
+        }
+    
+    total = int(len(df))
+    # Apply global threshold for statistics consistency
+    flagged = int((df['probability'] >= SYSTEM_SETTINGS["detection_threshold"]).sum())
+    avg_risk = float(df['probability'].mean()) * 100
+    
+    return {
+        "total_customers": total,
+        "flagged_today": flagged,
+        "resolved_cases": 12,  # Mock resolved cases
+        "average_risk": round(avg_risk, 1)
+    }
 
 @app.get("/api/explain/{customer_id}")
 def get_explanation(customer_id:int):
