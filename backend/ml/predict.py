@@ -28,6 +28,7 @@ def run_predictions() -> pd.DataFrame:
     # Aggregate to one row per customer (latest values)
     df_agg = df.groupby("customer_id").agg(
         last_power=("power", "last"),
+        last_timestamp=("timestamp", "last"),
         power_mean_24h=("power_mean_24h", "last"),
         power_std_24h=("power_std_24h", "last"),
         power_min_24h=("power_min_24h", "last"),
