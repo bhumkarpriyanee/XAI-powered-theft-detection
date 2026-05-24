@@ -1,0 +1,22 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# Database — don't push local DB, Railway will create a fresh one
+data.db
+
+# Keep model.pkl out too — Railway will retrain it during build
+# (comment this line out if you want to push a pre-trained model)
+# backend/ml/model.pkl
+
+# Node / React
+Dashboard/node_modules/
+Dashboard/dist/
+Dashboard/.env.local
+
+# OS
+.DS_Store
+Thumbs.db
