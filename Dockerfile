@@ -20,7 +20,7 @@ COPY . .
 RUN python generate_data.py && python -m backend.ml.train
 
 # Tell Railway which port to expose
-EXPOSE 8000
+EXPOSE 8080
 
 # Start the FastAPI server
-CMD [uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}]
+CMD [uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8080}]
